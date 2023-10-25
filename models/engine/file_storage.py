@@ -2,8 +2,9 @@
 """File Storage Engine"""
 import json
 from models.base_model import Basemodel
+from models.user import User
 
-classes = {"Basemodel": Basemodel}
+classes = {"Basemodel": Basemodel, "User": User}
 
 
 class FileStorage:

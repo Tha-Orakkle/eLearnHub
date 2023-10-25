@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Database Storage Engine"""
 from models.base_model import Base, Basemodel
+from models.user import User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from os import environ
@@ -34,7 +35,7 @@ class DBStorage:
                 key = type(obj).__name__ + '.' + obj.id
                 all_objs[key] = obj
         else:
-            classes = [Basemodel,]
+            classes = [Basemodel, User]
             for clss in classes:
                 cls_objs = self.__session.query(clss).all()
                 for obj in cls_objs:
