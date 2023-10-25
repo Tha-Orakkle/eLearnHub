@@ -9,8 +9,10 @@ from models import storage_type
 import uuid
 
 format = "%Y-%m-%d %H:%M:%S.%f"
-
-Base = declarative_base()
+if storage_type == "db":
+    Base = declarative_base()
+else:
+    Base = object
 
 class Basemodel():
     """Basemodel class that will be inherited by other class"""
