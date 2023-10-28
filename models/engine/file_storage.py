@@ -1,10 +1,15 @@
 #!/usr/bin/python3
 """File Storage Engine"""
 import json
-from models.base_model import Basemodel
+from models.category import Category
+from models.course import Course
+from models.instructor import Instructor
+from models.lecture import Lecture
+from models.material import Material
 from models.user import User
 
-classes = {"Basemodel": Basemodel, "User": User}
+classes = {"Category": Category, "Course": Course, "Instructor": Instructor,
+           "Lecture": Lecture, "Material": Material, "User": User}
 
 
 class FileStorage:
@@ -14,7 +19,7 @@ class FileStorage:
     __objects = {}
     
     # JSON file location
-    __file_path = "eLearnHub.json"
+    __file_path = "file.json"
     
     def all(self, cls=None):
         """returns all objects or the objects of a specific class"""

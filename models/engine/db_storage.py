@@ -1,6 +1,11 @@
 #!/usr/bin/python3
 """Database Storage Engine"""
-from models.base_model import Base, Basemodel
+from models.base_model import Base
+from models.category import Category
+from models.course import Course
+from models.instructor import Instructor
+from models.lecture import Lecture
+from models.material import Material
 from models.user import User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -20,9 +25,10 @@ class DBStorage:
         MYSQL_HOST = environ.get('ELH_MYSQL_HOST')
         MYSQL_DB = environ.get('ELH_MYSQL_DB')
         
-        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(
-            MYSQL_USER, MYSQL_PWD, MYSQL_HOST, MYSQL_DB
-        ))
+        # self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(
+        #     MYSQL_USER, MYSQL_PWD, MYSQL_HOST, MYSQL_DB
+        # ))
+        self.__engine = create_engine("sqlite:///file.db")
         
     def all(self, cls=None):
         """Returns all objects or the object of a specific class"""
@@ -35,7 +41,7 @@ class DBStorage:
                 key = type(obj).__name__ + '.' + obj.id
                 all_objs[key] = obj
         else:
-            classes = [Basemodel, User]
+            classes = [User, Course, Category, Instructor, Lecture, Material]
             for clss in classes:
                 cls_objs = self.__session.query(clss).all()
                 for obj in cls_objs:
@@ -63,7 +69,7 @@ class DBStorage:
     def reload(self):
         """reloads data from database"""
         Base.metadata.create_all(self.__engine)
-        sesh = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        sesh = sessionmaker(bind=self.__engine, expire_on_commit=True)
         Session = scoped_session(sesh)
         self.__session = Session()
         
