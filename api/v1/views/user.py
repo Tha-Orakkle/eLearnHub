@@ -16,3 +16,4 @@ def get_users():
         usr_list.append(user.to_dict())
     return jsonify(usr_list)
     
+    
