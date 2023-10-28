@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-contains the base_model class
+Defines the base_model class
 """
 from datetime import datetime
 from sqlalchemy import Column, String, DateTime
@@ -29,6 +29,14 @@ class Basemodel():
             for k, v in kwargs.items():
                 if k != "__class__":
                     setattr(self, k, v)
+            if kwargs.get('created_at', None) and type(self.created_at) is str:
+                self.created_at = datetime.strptime(kwargs["created_at"], format)
+            else:
+                self.created_at= datetime.utcnow()
+            if kwargs.get('updated_at', None) and type(self.updated_at) is str:
+                self.updated_at = datetime.strptime(kwargs["updated_at"], format)
+            else:
+                self.updated_at = datetime.utcnow()
         else:            
             self.id = str(uuid.uuid4())
             self.created_at = datetime.utcnow()
