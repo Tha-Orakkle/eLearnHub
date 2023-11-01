@@ -13,7 +13,8 @@ if storage_type == "db":
                                               ondelete='CASCADE'),
                                    primary_key=True),
                             Column('category_id', String(60),
-                                   ForeignKey('categories.id', onupdate='CASCADE',
+                                   ForeignKey('categories.id',
+                                              onupdate='CASCADE',
                                               ondelete='CASCADE'),
                                    primary_key=True)
                             )
@@ -21,16 +22,19 @@ if storage_type == "db":
 
 class Course(Basemodel, Base):
     """Representation of a course"""
-    
+
     if storage_type == "db":
         __tablename__ = "courses"
-        instructor_id = Column(String(60), ForeignKey('instructors.id'), nullable=False)
+        instructor_id = Column(String(60), ForeignKey('instructors.id'),
+                               nullable=False)
         title = Column(String(128), nullable=False)
         objectives = Column(String(1024), nullable=False)
         requirements = Column(String(1024), nullable=False)
         audience = Column(String(512), nullable=False)
-        lectures = relationship('Lecture', backref='course', cascade='all, delete, delete-orphan')
-        materials = relationship('Material', backref='course', cascade='all, delete, delete-orphan')
+        lectures = relationship('Lecture', backref='course',
+                                cascade='all, delete, delete-orphan')
+        materials = relationship('Material', backref='course',
+                                 cascade='all, delete, delete-orphan')
         categories = relationship('Category', secondary=course_category,
                                   backref="courses", viewonly=False)
     else:
@@ -40,11 +44,11 @@ class Course(Basemodel, Base):
         requirements = ""
         audience = ""
         category_ids = []
-        
+
     def __init__(self, *args, **kwargs):
         """Initializes course"""
         super().__init__(*args, **kwargs)
-        
+
     if storage_type != "db":
         @property
         def lectures(self):
@@ -55,7 +59,7 @@ class Course(Basemodel, Base):
                 if self.id == lecture.course_id:
                     course_lectures.append(lecture)
             return course_lectures
-        
+
         @property
         def materials(self):
             course_materials = []
@@ -65,23 +69,23 @@ class Course(Basemodel, Base):
                 if self.id == material.course_id:
                     course_materials.append(material)
             return course_materials
-        
+
+        @property
+        def instructor(self):
+            """getter attribute that returns an the obj of the instructor"""
+            from models.instructor import Instructor
+            return models.storage.get(Instructor, self.instructor.id)
+
         @property
         def categories(self):
             """Returns all the categories associated with the course"""
             return self.category_ids
-           
+
         @categories.setter
         def categories(self, obj=None):
-            """Appends a category to the categories_objs""" 
+            """Appends a category to the categories_objs"""
             from models.category import Category
-            if obj and type(obj) is Category and obj not in self.category_ids:
+            c_ids = self.category_ids
+            if obj and type(obj) is Category and obj.id not in c_ids:
                 self.category_ids.append(obj.id)
                 self.__dict__["category_ids"] = self.category_ids
-            # category_list = []
-            # from models.category import Category
-            # all_categories = models.storage.all(Category).values()
-            # for ca in all_categories:
-            #     if self.id == ca.course_id:
-            #         category_list.append(ca)
-            # return category_list

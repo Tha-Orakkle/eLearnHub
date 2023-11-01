@@ -14,7 +14,8 @@ class Instructor(Basemodel, Base):
     if storage_type == "db":
         __tablename__ = "instructors"
         user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
-        courses = relationship('Course', backref='instructor', cascade='all, delete, delete-orphan')
+        courses = relationship('Course', backref='instructor',
+                               cascade='all, delete, delete-orphan')
     else:
         user_id = ""
         courses = []
@@ -23,7 +24,7 @@ class Instructor(Basemodel, Base):
     def __init__(self, *args, **kwargs):
         """initializes the instructor"""
         super().__init__(*args, **kwargs)
-        
+
     if storage_type != "db":
         @property
         def courses(self):
@@ -34,7 +35,7 @@ class Instructor(Basemodel, Base):
                 if self.id == course.instructor_id:
                     instructor_courses.append(course)
             return instructor_courses
-    
+
         @property
         def user(self):
             """getter attribute that returns the user object"""
