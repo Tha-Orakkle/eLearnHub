@@ -1,10 +1,60 @@
 #!/usr/bin/python3
 """test basemnodel for expected behaviour"""
 from datetime import datetime
+import inspect
+import models
+import pycodestyle
 from models.base_model import Basemodel
 import time
 import unittest
 from unittest import mock
+module_doc = models.base_model.__doc__
+
+
+class TestBaseModelDocs(unittest.TestCase):
+    """Tests to check the documentation and style of BaseModel class"""
+
+    @classmethod
+    def setUpClass(self):
+        """Set up for docstring tests"""
+        self.base_funcs = inspect.getmembers(Basemodel, inspect.isfunction)
+
+    def test_pycodestyle_conformity(self):
+        """Test that models/base_model.py conforms to PEP8."""
+        for path in ['models/base_model.py',
+                     'tests/test_models/test_base_model.py']:
+            with self.subTest(path=path):
+                errors = pycodestyle.Checker(path).check_all()
+                self.assertEqual(errors, 0)
+
+    def test_module_docstring(self):
+        """Test for the existence of module docstring"""
+        self.assertIsNot(module_doc, None,
+                         "base_model.py needs a docstring")
+        self.assertTrue(len(module_doc) > 1,
+                        "base_model.py needs a docstring")
+
+    def test_class_docstring(self):
+        """Test for the BaseModel class docstring"""
+        self.assertIsNot(Basemodel.__doc__, None,
+                         "BaseModel class needs a docstring")
+        self.assertTrue(len(Basemodel.__doc__) >= 1,
+                        "BaseModel class needs a docstring")
+
+    def test_func_docstrings(self):
+        """Test for the presence of docstrings in BaseModel methods"""
+        for func in self.base_funcs:
+            with self.subTest(function=func):
+                self.assertIsNot(
+                    func[1].__doc__,
+                    None,
+                    "{:s} method needs a docstring".format(func[0])
+                )
+                self.assertTrue(
+                    len(func[1].__doc__) > 1,
+                    "{:s} method needs a docstring".format(func[0])
+                )
+
 
 class TestBasemodel(unittest.TestCase):
     """Test the Basemodel class"""
@@ -32,14 +82,14 @@ class TestBasemodel(unittest.TestCase):
         """Test that two Basemodel instances have different datetime objects
         and that upon creation have identical updated_at and created_at
         value."""
-        tic = datetime.now()
+        tic = datetime.utcnow()
         inst1 = Basemodel()
-        toc = datetime.now()
+        toc = datetime.utcnow()
         self.assertTrue(tic <= inst1.created_at <= toc)
         time.sleep(1e-4)
-        tic = datetime.now()
+        tic = datetime.utcnow()
         inst2 = Basemodel()
-        toc = datetime.now()
+        toc = datetime.utcnow()
         self.assertTrue(tic <= inst2.created_at <= toc)
         self.assertEqual(inst1.created_at, inst1.updated_at)
         self.assertEqual(inst2.created_at, inst2.updated_at)
@@ -63,8 +113,8 @@ class TestBasemodel(unittest.TestCase):
     def test_to_dict(self):
         """Test conversion of object attributes to dictionary for json"""
         my_model = Basemodel()
-        my_model.name = "Holberton"
-        my_model.my_number = 89
+        my_model.name = "eLearnHub"
+        my_model.my_number = 911
         d = my_model.to_dict()
         expected_attrs = ["id",
                           "created_at",
@@ -74,12 +124,12 @@ class TestBasemodel(unittest.TestCase):
                           "__class__"]
         self.assertCountEqual(d.keys(), expected_attrs)
         self.assertEqual(d['__class__'], 'Basemodel')
-        self.assertEqual(d['name'], "Holberton")
-        self.assertEqual(d['my_number'], 89)
+        self.assertEqual(d['name'], "eLearnHub")
+        self.assertEqual(d['my_number'], 911)
 
     def test_to_dict_values(self):
         """test that values in dict returned from to_dict are correct"""
-        t_format = "%Y-%m-%dT%H:%M:%S.%f"
+        t_format = "%Y-%m-%d %H:%M:%S.%f"
         bm = Basemodel()
         new_d = bm.to_dict()
         self.assertEqual(new_d["__class__"], "Basemodel")
@@ -101,6 +151,7 @@ class TestBasemodel(unittest.TestCase):
         inst = Basemodel()
         old_created_at = inst.created_at
         old_updated_at = inst.updated_at
+        time.sleep(1e-4)
         inst.save()
         new_created_at = inst.created_at
         new_updated_at = inst.updated_at
