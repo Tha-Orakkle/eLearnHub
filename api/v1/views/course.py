@@ -46,7 +46,7 @@ def create_course():
         abort(400, description="Not a JSON")
     for attr in course_attr:
         if attr not in data:
-            abort(400, description="Course {:s} missing".format(attr))
+            abort(400, description="Course {:s} attr missing".format(attr))
     if storage.get(Instructor, data.get("instructor_id", None)) is None:
         abort(400, description="Invalid instructor_id")
     course = Course(**data)

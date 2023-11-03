@@ -44,7 +44,7 @@ def delete_instructor(instructor_id):
     storage.save()
     return make_response(jsonify({}), 200)
 
-@app_views.route('/<user_id>/instructor', methods=['POST'],
+@app_views.route('/users/<user_id>/instructor', methods=['POST'],
                  strict_slashes=False)
 def create_instructor(user_id):
     """Creates instructor and links to a user"""

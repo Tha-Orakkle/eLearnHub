@@ -32,7 +32,10 @@ def sign_up():
         abort(400, description="Missing password")
     if "first_name" not in data or "last_name" not in data:
         abort(400, description="Missing Name")
-    
+    all_usrs = storage.all(User).values()
+    for usr in all_usrs:
+        if data["email"] == usr.email:
+            abort(400, description="User already exists")
     new_user = User(**data)
     new_user.save()
     return make_response(jsonify(new_user.to_dict()), 201)
