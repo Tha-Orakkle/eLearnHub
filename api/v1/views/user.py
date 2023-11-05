@@ -5,6 +5,7 @@ from flask import abort, jsonify, make_response, request
 from models import storage
 from models.user import User
 
+
 @app_views.route('/users', methods=['GET'], strict_slashes=False)
 def get_users():
     """
@@ -15,7 +16,8 @@ def get_users():
     for user in all_users:
         usr_list.append(user.to_dict())
     return jsonify(usr_list)
-    
+
+
 @app_views.route('/users/<user_id>', methods=['GET'], strict_slashes=False)
 def get_user(user_id):
     """Gets the details of a user that matches a user_id"""
@@ -23,6 +25,7 @@ def get_user(user_id):
     if usr is None:
         abort(404)
     return jsonify(usr.to_dict())
+
 
 @app_views.route('/users/<user_id>', methods=['DELETE'], strict_slashes=False)
 def delete_user(user_id):
@@ -33,6 +36,7 @@ def delete_user(user_id):
     storage.delete(usr)
     storage.save()
     return make_response(jsonify({}), 200)
+
 
 @app_views.route('/users/<user_id>', methods=['PUT'], strict_slashes=False)
 def update_user(user_id):

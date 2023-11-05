@@ -7,6 +7,7 @@ from flask import abort, jsonify, make_response, request
 from models import storage
 from models.user import User
 
+
 def decrypt_password(email, password):
     """Decrypts password to find matching user"""
     all_usrs = storage.all(User).values()
@@ -14,11 +15,12 @@ def decrypt_password(email, password):
         if email == usr.email:
             usr_hpwd = base64.b64decode(usr.password)
             usr_pwd_salt = base64.b64decode(usr.password_salt)
-            hash_entered_pwd = bcrypt.hashpw(password.encode('utf-8'), usr_pwd_salt)
+            hash_entered_pwd = bcrypt.hashpw(password.encode('utf-8'),
+                                             usr_pwd_salt)
             if usr_hpwd == hash_entered_pwd:
                 return usr
     return None
-    
+
 
 @app_views.route('/sign_up', methods=['POST'], strict_slashes=False)
 def sign_up():
@@ -39,6 +41,7 @@ def sign_up():
     new_user = User(**data)
     new_user.save()
     return make_response(jsonify(new_user.to_dict()), 201)
+
 
 @app_views.route('/login', methods=['POST'], strict_slashes=False)
 def login():

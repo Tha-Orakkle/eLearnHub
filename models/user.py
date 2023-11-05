@@ -59,7 +59,6 @@ class User(Basemodel, Base):
             del kwargs['password']
         super().__init__(*args, **kwargs)
 
-     
     if storage_type != "db":
         @property
         def instructor(self):
