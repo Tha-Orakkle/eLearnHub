@@ -19,6 +19,7 @@ def get_courses():
         course_list.append(course.to_dict())
     return jsonify(course_list)
 
+
 @app_views.route('/courses/<course_id>', methods=['GET'], strict_slashes=False)
 def get_course(course_id):
     """Gets a specific course"""
@@ -27,7 +28,9 @@ def get_course(course_id):
         abort(404)
     return jsonify(course.to_dict())
 
-@app_views.route('/courses/<course_id>', methods=['DELETE'], strict_slashes=False)
+
+@app_views.route('/courses/<course_id>', methods=['DELETE'],
+                 strict_slashes=False)
 def delete_course(course_id):
     """Deletes a specific course"""
     course = storage.get(Course, course_id)
@@ -37,7 +40,7 @@ def delete_course(course_id):
     storage.save()
     return make_response(jsonify({}), 200)
 
-    
+
 @app_views.route('/courses', methods=['POST'], strict_slashes=False)
 def create_course():
     """Creates a Course"""
@@ -52,7 +55,8 @@ def create_course():
     course = Course(**data)
     course.save()
     return make_response(jsonify(course.to_dict()), 201)
-    
+
+
 @app_views.route('/courses/<course_id>', methods=['PUT'],
                  strict_slashes=False)
 def update_course(course_id):
@@ -68,3 +72,25 @@ def update_course(course_id):
             setattr(course, k, v)
     storage.save()
     return make_response(jsonify(course.to_dict()), 200)
+
+
+@app_views.route('/course_search', methods=['POST'],
+                 strict_slashes=False)
+def place_search():
+    """searches for courses"""
+    data = request.get_json()
+    if not data:
+        abort(400, description="NOT a JSON")
+    if len(data) == 0:
+        abort()
+    result = []
+    all_courses = storage.all(Course)
+    for crs in all_courses:
+        crs_title = crs.title.split()
+        crs_instructor = crs.instructor.user.first_name + " "
+        crs_instructor += crs.instructor.user.last_name
+        for x in data:
+            if (x in crs_title or x in crs_instructor.split()) and
+            crs not in result:
+                result.append(crs)
+    return jsonify(result)
