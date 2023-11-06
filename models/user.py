@@ -34,6 +34,7 @@ class User(Basemodel, Base):
         first_name = Column(String(32), nullable=False)
         last_name = Column(String(32), nullable=False)
         telephone = Column(String(32), nullable=True)
+        profile_pic = Column(String(256), nullable=True)
         instructor = relationship('Instructor', backref='user', uselist=False,
                                   cascade="all, delete-orphan")
         student_courses = relationship('Course', secondary=course_enroll,
@@ -45,6 +46,7 @@ class User(Basemodel, Base):
         first_name = ""
         last_name = ""
         telephone = ""
+        profile_pic = ""
         instructor = None
         student_courses_ids = []
 

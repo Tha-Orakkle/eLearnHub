@@ -3,5 +3,5 @@ __pycache__/
 */*/__pycache__/
 apis.txt
 check.py
-environmental_vars
 file.json
+uploads/
