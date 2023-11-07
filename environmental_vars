@@ -1,0 +1,5 @@
+ELH_TYPE_STORAGE=db
+ELH_MYSQL_USER=elearn_dev
+ELH_MYSQL_PWD=elearn_pwd
+ELH_MYSQL_HOST=localhost
+ELH_MYSQL_DB=elearn_db

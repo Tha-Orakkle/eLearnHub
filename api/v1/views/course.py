@@ -90,7 +90,6 @@ def place_search():
         crs_instructor = crs.instructor.user.first_name + " "
         crs_instructor += crs.instructor.user.last_name
         for x in data:
-            if (x in crs_title or x in crs_instructor.split()) and
-            crs not in result:
+            if (x in crs_title or x in crs_instructor.split()) and crs not in result:
                 result.append(crs)
     return jsonify(result)
