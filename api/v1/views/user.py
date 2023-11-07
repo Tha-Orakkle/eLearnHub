@@ -33,11 +33,12 @@ def create_user():
     if "email" not in data:
         abort(400, description="Missing email")
     if "image" in request.files:
-        image = request.files['image']
+        image = request. files['image']
         profile_path = os.path.join(upload_folder, data['email'])
         if not os.path.exists(profile_path):
             os.makedirs(profile_path)
-        filename = os.path.join(profile_path, image.filename)
+        # filename = os.path.join(profile_path, image.filename)
+        filename = os.path.join(profile_path, "profile_pic")
         image.save(filename)
         data = data.to_dict()
         data['profile_pic'] = filename

@@ -58,8 +58,8 @@ def sign_up():
     all_usrs = storage.all(User).values()
     for usr in all_usrs:
         if data["email"] == usr.email:
-            abort(400, description="User already exists")
-     
+            return render_template('register.html', error="User with the email already exists")
+        
     if "profile_pic" in request.files:
         image = request.files['profile_pic']
         if image.filename == '':
@@ -71,24 +71,23 @@ def sign_up():
     if response.status_code != 201:
         abort(400, description="User not created")
     usr = storage.get(User, response.json()['id'])
-    return render_template('home.html',
-                           user=usr)
+    return render_template('home.html', user=usr)
     
 @app.route('/login', methods=['POST'], strict_slashes=False)
 def login():
     """log in as a user"""
     data = request.form
     if not data:
-        abort(400)
+        return render_template('login.html', error="Enter login details")
     if "email" not in data:
-        abort(400, description="Missing email")
+        return render_template('login.html', error="Invalid email")
     if "password" not in data:
-        abort(400, description="Missing password")
+        return render_template('login.html', error="Invalid password")
     email = data["email"]
     password = data["password"]
     usr = decrypt_password(email, password)
     if usr is None:
-        abort(400, description="User does not exit")
+        return render_template('login.html', error="email/password is invalid")
     return render_template('home.html', user=usr)
     
 
