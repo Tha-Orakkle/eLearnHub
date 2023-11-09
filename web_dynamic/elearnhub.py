@@ -1,13 +1,16 @@
 #!/usr/bin/python3
+"""main application file"""
 import base64
 import bcrypt
-from flask import abort, Flask, jsonify, render_template, request
+import requests
+from flask import abort, Flask, render_template, request, jsonify
 from models import storage
 from models.user import User
-import requests
+from web_dynamic.page_routes import page_routes
+
 
 app = Flask(__name__)
-
+app.register_blueprint(page_routes)
 
 def decrypt_password(email, password):
     """Decrypts password to find matching user"""
@@ -30,46 +33,28 @@ def close_db(error):
     storage.close()
 
 
-@app.route('/elearn', methods=['GET'], strict_slashes=False)
-def elearn():
-    """ElearnHub Home"""
-    return render_template('home.html')
-
-
-@app.route('/register', methods=['GET'], strict_slashes=False)
-def register():
-    """serves the register page"""
-    return render_template('register.html')
-
-@app.route('/sign_in', methods=['GET'], strict_slashes=False)
-def sign_in():
-    """serves the login page"""
-    return render_template('login.html')
-
 @app.route('/sign_up', methods=['POST'], strict_slashes=False)
 def sign_up():
     """Registers a  new user"""
-    app.config['UPLOAD_FOLDER'] = "uploads"
     url = "http://127.0.0.1:5000/api/v1/users"
-    files = {}
     data = request.form
+    files = {}
+    headers = {}
     if "email" not in data:
         abort(400, description="Missing email")
     all_usrs = storage.all(User).values()
     for usr in all_usrs:
         if data["email"] == usr.email:
             return render_template('register.html', error="User with the email already exists")
-        
-    if "profile_pic" in request.files:
-        image = request.files['profile_pic']
-        if image.filename == '':
-            abort(400, description="No file Selected")
-        files['image'] = (image.filename, image.stream)
-    
+    req_files = request.files
+    if "profile_pic" in req_files and req_files["profile_pic"].filename != "":
+        image = req_files["profile_pic"]
+        files["profile_pic"] = image
+        headers['X-Original-Filename'] = image.filename
     data_copy = data.to_dict(flat=True)
-    response = requests.post(url, data=data_copy, files=files)
+    response = requests.post(url, data=data_copy, files=files, headers=headers)
     if response.status_code != 201:
-        abort(400, description="User not created")
+        return render_template('register.html', error="error occured")
     usr = storage.get(User, response.json()['id'])
     return render_template('home.html', user=usr)
     

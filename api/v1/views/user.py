@@ -5,7 +5,25 @@ from flask import abort, jsonify, make_response, request
 from models import storage
 from models.user import User
 import os
-upload_folder = "uploads"
+upload_folder = os.path.join("web_dynamic", "uploads")
+
+
+
+def save_image(user, image, filename):
+    """saves/replaces profile picture"""
+    file = "profile_pic." + filename.split('.')[1]
+    file_path = os.path.join(upload_folder, user.id)
+    filename = os.path.join(file_path, file)
+    try:
+        if not os.path.exists(file_path):
+            os.makedirs(file_path)
+        else:
+            if os.path.exists(filename):
+                os.remove(filename)
+    except Exception:
+        pass
+    image.save(filename)
+    return os.path.join("uploads", user.id, file)
 
 
 @app_views.route('/users', methods=['GET'], strict_slashes=False)
@@ -32,21 +50,16 @@ def create_user():
         abort(400, description="Missing password")
     if "email" not in data:
         abort(400, description="Missing email")
-    if "image" in request.files:
-        image = request. files['image']
-        profile_path = os.path.join(upload_folder, data['email'])
-        if not os.path.exists(profile_path):
-            os.makedirs(profile_path)
-        # filename = os.path.join(profile_path, image.filename)
-        filename = os.path.join(profile_path, "profile_pic")
-        image.save(filename)
-        data = data.to_dict()
-        data['profile_pic'] = filename
     new_user = User(**data)
+    if "profile_pic" in request.files:
+        image = request.files['profile_pic']
+        filename = request.headers.get('X-Original-Filename')
+        file_path = save_image(new_user, image, filename)
+        new_user.profile_pic = file_path
+    
     new_user.save()
     return jsonify(new_user.to_dict()), 201
-
-
+    
 
 
 @app_views.route('/users/<user_id>', methods=['GET'], strict_slashes=False)
@@ -79,7 +92,7 @@ def update_user(user_id):
     if not data:
         abort(400, description="Not a JSON")
     for k, v in data.items():
-        if k != "id" and k != "created_at" and k != "updated_at":
+        if k != "id" and k != "created_at" and k != "updated_at" and v != "":
             setattr(usr, k, v)
     storage.save()
     return make_response(jsonify(usr.to_dict()), 200)
