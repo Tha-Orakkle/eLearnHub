@@ -55,7 +55,9 @@ def sign_up():
     response = requests.post(url, data=data_copy, files=files, headers=headers)
     if response.status_code != 201:
         return render_template('register.html', error="error occured")
-    usr = storage.get(User, response.json()['id'])
+    id  = response.json().get("id")
+    storage.save()
+    usr = storage.get(User, id)
     return render_template('home.html', user=usr)
     
 @app.route('/login', methods=['POST'], strict_slashes=False)

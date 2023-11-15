@@ -34,15 +34,22 @@ def profile(id):
 @page_routes.route('/profile/<id>/update', methods=['GET', 'POST'], strict_slashes=False)
 def profile_update(id):
     """serves the update page"""
-    usr = storage.get(User, id)
     if request.method == 'GET':
+        usr = storage.get(User, id)
         return render_template('update.html', user=usr)
     elif request.method == 'POST':
-        url = "http://127.0.0.1:5000/api/v1/users/{}".format(usr.id)
+        url = "http://127.0.0.1:5000/api/v1/users/{}".format(id)
         data = request.form.to_dict()
-        files = {'profile_pic': request.files.get('profile_pic', None)}
-        res = requests.put(url, data=data, files=files)
-        # =========In progesss =================
+        files = {}
+        headers = {}
+        if "profile_pic" in request.files:
+            files['profile_pic'] = request.files.get('profile_pic', None)
+            headers["X_-Original-Filename"] = files["profile_pic"].filename
+        res = requests.put(url, data=data, files=files, headers=headers)
+        if res.status_code != 200:
+            return render_template('update.html', status="file not updated")
+        usr = storage.get(User, id)
+        return render_template('update.html', status="file successfully updated", user=usr)
 
 @page_routes.route('/courses', methods=['GET'], strict_slashes=False)
 def courses():

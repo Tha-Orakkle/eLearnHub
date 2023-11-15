@@ -56,7 +56,6 @@ def create_user():
         filename = request.headers.get('X-Original-Filename')
         file_path = save_image(new_user, image, filename)
         new_user.profile_pic = file_path
-    
     new_user.save()
     return jsonify(new_user.to_dict()), 201
     
@@ -87,12 +86,18 @@ def update_user(user_id):
     """update a user"""
     usr = storage.get(User, user_id)
     if not usr:
-        abort(404)
-    data = request.get_json()
+        abort(404, description="Invalid user_id")
+    if "profile_pic" in request.files and request.files["profile_pic"]:
+        image = request.files["profile_pic"]
+        filename = request.headers.get('X-Original-Filename')
+        file_path = save_image(usr, image, filename)
+        usr.profile_pic = file_path
+    data = request.form
     if not data:
         abort(400, description="Not a JSON")
+    ignore = ['id', 'created', 'updataed_at', 'password']
     for k, v in data.items():
-        if k != "id" and k != "created_at" and k != "updated_at" and v != "":
+        if k not in ignore and v != "":
             setattr(usr, k, v)
     storage.save()
     return make_response(jsonify(usr.to_dict()), 200)
