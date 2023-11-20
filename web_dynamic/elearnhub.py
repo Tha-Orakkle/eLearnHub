@@ -31,7 +31,11 @@ def decrypt_password(email, password):
 def close_db(error):
     """removes current session"""
     storage.close()
-
+    
+@app.route('/home', methods=['GET'], strict_slashes=False)
+def home():
+    """serves the landing page"""
+    return render_template('index.html')
 
 @app.route('/sign_up', methods=['POST'], strict_slashes=False)
 def sign_up():

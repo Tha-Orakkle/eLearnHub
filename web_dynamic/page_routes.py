@@ -14,6 +14,11 @@ def elearn():
     """ElearnHub Home"""
     return render_template('home.html')
 
+@page_routes.route('/about', methods=['GET'], strict_slashes=False)
+def about_page():
+    """serves the about page"""
+    return render_template('about.html')
+
 
 @page_routes.route('/register', methods=['GET'], strict_slashes=False)
 def register():
@@ -50,6 +55,13 @@ def profile_update(id):
             return render_template('update.html', status="file not updated")
         usr = storage.get(User, id)
         return render_template('update.html', status="file successfully updated", user=usr)
+    
+@page_routes.route('/teachers', methods=['GET'], strict_slashes=False)
+def teachers():
+    """serves the teachers page"""
+    id = request.args.get('id', None)
+    usr = storage.get(User, id)
+    return render_template('teachers.html', user=usr)
 
 @page_routes.route('/courses', methods=['GET'], strict_slashes=False)
 def courses():
