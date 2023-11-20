@@ -35,7 +35,7 @@
 
       <div class="profile">
          <img src="../static/images/pic-1.jpg" class="image" alt="">
-         <h3 class="name">Mido</h3>
+         <h3 class="name">{{ user.first_name }} {{ user.last_name }}</h3>
          <p class="role">student</p>
          <a href="profile.html" class="btn">view profile</a>
          <div class="flex-btn">
@@ -56,7 +56,7 @@
 
    <div class="profile">
       <img src="../static/images/pic-1.jpg" class="image" alt="">
-      <h3 class="name">Mido</h3>
+      <h3 class="name">{{ user.first_name }} {{ user.last_name }}</h3>
       <p class="role">student</p>
       <a href="profile.html" class="btn">view profile</a>
    </div>
@@ -79,9 +79,10 @@
 
       <div class="user">
          <img src="../static/images/pic-1.jpg" alt="">
-         <h3>Mido</h3>
+         <h3>{{ user.first_name }} {{ user.last_name }}</h3>
          <p>student</p>
-         <a href="update.html" class="inline-btn">update profile</a>
+         <a href="/profile/{{ user.id }}/update" class="inline-btn">update profile</a>
+         <!-- <a href="{{ url_for('page_routes.profile_update', id=user.id) }}" class="inline-btn">update profile</a> -->
       </div>
    
       <div class="box-container">

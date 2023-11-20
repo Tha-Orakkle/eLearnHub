@@ -8,8 +8,18 @@ import models
 from models import storage_type
 from models.base_model import Base, Basemodel
 from models.instructor import Instructor
-from sqlalchemy import Column, ForeignKey, String, Table
+from sqlalchemy import Column, ForeignKey, String, Table, Boolean
 from sqlalchemy.orm import relationship
+
+
+def encrypt_password(pwd):
+    """encrypts password anf returns a list that
+    contains the salt and encrypted password"""
+    salt = bcrypt.gensalt()
+    password_salt = base64.b64encode(salt).decode('utf-8')
+    pwd = bcrypt.hashpw(pwd.encode('utf-8'), salt)
+    h_pwd = base64.b64encode(pwd).decode('utf-8')
+    return [password_salt, h_pwd]
 
 if storage_type == "db":
     course_enroll = Table('couse_enroll', Base.metadata,
@@ -34,6 +44,7 @@ class User(Basemodel, Base):
         first_name = Column(String(32), nullable=False)
         last_name = Column(String(32), nullable=False)
         telephone = Column(String(32), nullable=True)
+        is_instructor = Column(Boolean, default=False)
         profile_pic = Column(String(256), nullable=True)
         instructor = relationship('Instructor', backref='user', uselist=False,
                                   cascade="all, delete-orphan")
@@ -47,17 +58,16 @@ class User(Basemodel, Base):
         last_name = ""
         telephone = ""
         profile_pic = ""
+        is_Instructor = False
         instructor = None
         student_courses_ids = []
 
     def __init__(self, *args, **kwargs):
         """initializes user"""
         if kwargs and kwargs['password']:
-            pwd = kwargs['password']
-            salt = bcrypt.gensalt()
-            self.password_salt = base64.b64encode(salt).decode('utf-8')
-            pwd = bcrypt.hashpw(pwd.encode('utf-8'), salt)
-            self.password = base64.b64encode(pwd).decode('utf-8')
+            ret = encrypt_password(kwargs['password'])
+            self.password_salt = ret[0]
+            self.password = ret[1]
             del kwargs['password']
         super().__init__(*args, **kwargs)
 

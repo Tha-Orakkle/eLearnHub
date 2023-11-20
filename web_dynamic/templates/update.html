@@ -10,7 +10,7 @@
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
 
    <!-- custom css file link  -->
-   <link rel="stylesheet" href="../static/css/style.css">
+   <link rel="stylesheet" href="/static/css/style.css">
 
 </head>
 <body>
@@ -34,7 +34,7 @@
       </div>
 
       <div class="profile">
-         <img src="../static/images/pic-1.jpg" class="image" alt="">
+         <img src="/static/images/pic-1.jpg" class="image" alt="">
          <h3 class="name">Mido</h3>
          <p class="role">studen</p>
          <a href="profile.html" class="btn">view profile</a>
@@ -55,8 +55,8 @@
    </div>
 
    <div class="profile">
-      <img src="../static/images/pic-1.jpg" class="image" alt="">
-      <h3 class="name">Mido</h3>
+      <img src="/static/images/pic-1.jpg" class="image" alt="">
+      <h3 class="name">{{ user.last_name }} {{ user.first_name }}</h3>
       <p class="role">student</p>
       <a href="profile.html" class="btn">view profile</a>
    </div>
@@ -73,28 +73,26 @@
 
 <section class="form-container">
 
-   <form action="" method="post" enctype="multipart/form-data">
+   <form action="/profile/{{ user.id }}/update" method="post" enctype="multipart/form-data">
       <h3>update profile</h3>
-      <p>update name</p>
-      <input type="text" name="name" placeholder="Mido" maxlength="50" class="box">
+      <p>First Name</p>
+      <input type="text" name="first_name" maxlength="50" class="box" placeholder="{{ user.first_name }}">
+      <p>Last Name</p>
+      <input type="text" name="last_name" maxlength="50" class="box" placeholder="{{ user.last_name }}">
       <p>update email</p>
-      <input type="email" name="email" placeholder="Mido@gmail.come" maxlength="50" class="box">
+      <input type="email" name="email"  maxlength="50" class="box" placeholder="{{ user.email }}">
       <p>previous password</p>
-      <input type="password" name="old_pass" placeholder="enter your old password" maxlength="20" class="box">
+      <input type="password" name="old_pass" placeholder="enter old password" maxlength="20" class="box">
       <p>new password</p>
-      <input type="password" name="new_pass" placeholder="enter your old password" maxlength="20" class="box">
+      <input type="password" name="new_pass" placeholder="enter new password" maxlength="20" class="box">
       <p>confirm password</p>
-      <input type="password" name="c_pass" placeholder="confirm your new password" maxlength="20" class="box">
-      <p>update pic</p>
+      <input type="password" name="c_pass" placeholder="confirm new password" maxlength="20" class="box">
+      <p>update profile pic</p>
       <input type="file" accept="image/*" class="box">
       <input type="submit" value="update profile" name="submit" class="btn">
    </form>
 
 </section>
-
-
-
-
 
 
 
@@ -113,7 +111,7 @@
 </footer>
 
 <!-- custom js file link  -->
-<script src="../static/js/script.js"></script>
+<script src="/static/js/script.js"></script>
 
    
 </body>
