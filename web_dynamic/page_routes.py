@@ -66,4 +66,8 @@ def teachers():
 @page_routes.route('/courses', methods=['GET'], strict_slashes=False)
 def courses():
     """serves the courses page"""
-    return render_template('courses.html')
+    id = request.args.get(id, None)
+    usr = storage.get(User, id)
+    st_courses = usr.student_courses
+    return render_template('courses.html', user=usr,
+                           courses=st_courses)

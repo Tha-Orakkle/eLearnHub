@@ -8,7 +8,7 @@ import models
 from models import storage_type
 from models.base_model import Base, Basemodel
 from models.instructor import Instructor
-from sqlalchemy import Column, ForeignKey, String, Table
+from sqlalchemy import Column, ForeignKey, String, Table, Boolean
 from sqlalchemy.orm import relationship
 
 
@@ -44,6 +44,7 @@ class User(Basemodel, Base):
         first_name = Column(String(32), nullable=False)
         last_name = Column(String(32), nullable=False)
         telephone = Column(String(32), nullable=True)
+        is_instructor = Column(Boolean, default=False)
         profile_pic = Column(String(256), nullable=True)
         instructor = relationship('Instructor', backref='user', uselist=False,
                                   cascade="all, delete-orphan")
@@ -57,6 +58,7 @@ class User(Basemodel, Base):
         last_name = ""
         telephone = ""
         profile_pic = ""
+        is_Instructor = False
         instructor = None
         student_courses_ids = []
 

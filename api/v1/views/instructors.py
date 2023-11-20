@@ -56,6 +56,8 @@ def create_instructor(user_id):
     if not usr:
         abort(404)
     instructor = Instructor(**{"user_id": usr.id})
+    usr.is_instructor = True
     instructor.save()
+    usr.save()
     user_instructor = create_instructor_user_details(usr, instructor)
     return make_response(jsonify(user_instructor))
